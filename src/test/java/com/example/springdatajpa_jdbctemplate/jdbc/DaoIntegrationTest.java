@@ -5,10 +5,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import com.example.springdatajpa_jdbctemplate.model.Author;
 import com.example.springdatajpa_jdbctemplate.dao.AuthorDaoImpl;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @ComponentScan(basePackages = {"com.example.springdatajpa_jdbctemplate"})
@@ -55,16 +57,17 @@ public class DaoIntegrationTest {
 		assertThat(updated.getLastName()).isEqualTo("knight");
 	}
 
-// 	@Test
-// 	void testDeleteAuthor() {
-// 		Author author = new Author();
-// 		author.setFirstName("sam");
-// 		author.setLastName("kni");
-// 
-// 		Author saved = authorDaoImpl.saveNewAuthor(author);
-// 		authorDaoImpl.deleteAuthorById(saved.getId());
-// 		Author deleted = authorDaoImpl.getById(saved.getId());
-// 
-// 		assertThat(deleted).isNull();
-// 	}
+	@Test
+	void testDeleteAuthor() {
+		Author author = new Author();
+		author.setFirstName("sam");
+		author.setLastName("kni");
+
+		Author saved = authorDaoImpl.saveNewAuthor(author);
+		authorDaoImpl.deleteAuthorById(saved.getId());
+
+		assertThrows(EmptyResultDataAccessException.class, () -> {
+			authorDaoImpl.getById(saved.getId());
+		});
+	}
 }
