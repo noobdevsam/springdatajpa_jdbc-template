@@ -2,6 +2,7 @@ package com.example.springdatajpa_jdbctemplate.dao;
 
 import com.example.springdatajpa_jdbctemplate.model.Author;
 import org.springframework.stereotype.Component;
+import org.springframework.jdbc.core.RowMapper;
 
 @Component
 public class AuthorDaoImpl implements AuthorDao{
@@ -28,5 +29,9 @@ public class AuthorDaoImpl implements AuthorDao{
 	
 	public void deleteAuthorById(Long id) {
 		
+	}
+
+	private RowMapper<Author> getRowMapper() {
+		return new AuthorMapper();
 	}
 }
