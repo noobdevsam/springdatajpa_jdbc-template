@@ -2,14 +2,20 @@ package com.example.springdatajpa_jdbctemplate.dao;
 
 import com.example.springdatajpa_jdbctemplate.model.Author;
 import org.springframework.stereotype.Component;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.*;
 
 @Component
 public class AuthorDaoImpl implements AuthorDao{
 
+	private final JdbcTemplate jdbcTemplate;
+
+	public AuthorDaoImpl(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
+	
 	@Override
 	public Author getById(Long id) {
-		return null;
+		return jdbcTemplate.queryForObject("select * from author where id = ?", getRowMapper(), id);
 	}
 
 	@Override
