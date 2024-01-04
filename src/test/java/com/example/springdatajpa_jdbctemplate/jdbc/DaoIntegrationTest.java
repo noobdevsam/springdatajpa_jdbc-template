@@ -41,4 +41,30 @@ public class DaoIntegrationTest {
 
 		assertThat(saved).isNotNull();
 	}
+
+	@Test
+	void testUpdateAuthor() {
+		Author author = new Author();
+		author.setFirstName("sam");
+		author.setLastName("kni");
+
+		Author saved = authorDaoImpl.saveNewAuthor(author);
+		saved.setLastName("knight");
+		Author updated = authorDaoImpl.updateAuthor(saved);
+
+		assertThat(updated.getLastName()).isEqualTo("knight");
+	}
+
+// 	@Test
+// 	void testDeleteAuthor() {
+// 		Author author = new Author();
+// 		author.setFirstName("sam");
+// 		author.setLastName("kni");
+// 
+// 		Author saved = authorDaoImpl.saveNewAuthor(author);
+// 		authorDaoImpl.deleteAuthorById(saved.getId());
+// 		Author deleted = authorDaoImpl.getById(saved.getId());
+// 
+// 		assertThat(deleted).isNull();
+// 	}
 }
