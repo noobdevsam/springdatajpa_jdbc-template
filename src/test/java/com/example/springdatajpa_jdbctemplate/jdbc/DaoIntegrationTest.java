@@ -6,8 +6,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import com.example.springdatajpa_jdbctemplate.model.Author;
-import com.example.springdatajpa_jdbctemplate.dao.AuthorDaoImpl;
+import com.example.springdatajpa_jdbctemplate.model.*;
+import com.example.springdatajpa_jdbctemplate.dao.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,6 +19,9 @@ public class DaoIntegrationTest {
 
 	@Autowired
 	AuthorDaoImpl authorDaoImpl;
+
+	@Autowired
+	BookDaoImpl bookDaoImpl;
 
 	@Test
 	void testGetAuthorById() {
@@ -68,6 +71,61 @@ public class DaoIntegrationTest {
 
 		assertThrows(EmptyResultDataAccessException.class, () -> {
 			authorDaoImpl.getById(saved.getId());
+		});
+	}
+
+	@Test
+	void testGetBookById() {
+		Book book = bookDaoImpl.getById(3L);
+		assertThat(book.getId()).isNotNull();
+	}
+
+	@Test
+	void testGetBookByTitle() {
+		Book book = bookDaoImpl.findBookByTitle("Clean Code");
+		assertThat(book).isNotNull();
+	}
+
+	@Test
+	void testSaveBook() {
+		Book book = new Book();
+		book.setIsbn("1234");
+		book.setPublisher("Self");
+		book.setTitle("my book");
+		book.setAuthorId(1l);
+
+		Book saved = bookDaoImpl.saveNewBook(book);
+		assertThat(saved).isNotNull();
+	}
+
+	@Test
+	void testUpdateBook() {
+		Book book = new Book();
+		book.setIsbn("1234");
+		book.setPublisher("Self");
+		book.setTitle("my book");
+		book.setAuthorId(1l);
+		Book saved = bookDaoImpl.saveNewBook(book);
+
+		saved.setTitle("New Book");
+		bookDaoImpl.updateBook(saved);
+
+		Book fetched = bookDaoImpl.getById(saved.getId());
+		assertThat(fetched.getTitle()).isEqualTo("New Book");
+	}
+
+	@Test
+	void testDeleteBook() {
+		Book book = new Book();
+		book.setIsbn("1234");
+		book.setPublisher("Self");
+		book.setTitle("my book");
+		Book saved = bookDaoImpl.saveNewBook(book);
+
+		bookDaoImpl.deleteBookById(saved.getId());
+		
+		assertThrows(EmptyResultDataAccessException.class, () -> {
+			bookDaoImpl.getById(saved.getId());
 		});
 	}
 }
